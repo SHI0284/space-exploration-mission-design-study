@@ -1,0 +1,22 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Generated MATLAB outputs
+/results/
+*.log
+*.asv
+*.m~
+*.mlx.autosave
+slprj/
+codegen/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
