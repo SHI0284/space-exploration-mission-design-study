@@ -34,10 +34,13 @@ app = launch_mission_designer;
 | 그림자 기하 | `run_shadow_geometry_demo` | 고정 태양의 원통·유한 원반 그림자 비교 |
 | 공식 식·낮 조건 | `run_lighting_demo` | Toolbox eclipse 모델과 지상 낮 조건 |
 | Walker-Delta | `run_walker_demo(true,true)` | 24기·3면, F=0/1/2 비교와 3D 뷰어 |
+| 실제 TLE·지상국 | `run_tle_demo` 또는 앱의 실제 위성 · TLE 탭 | 국제캠퍼스 기준 24시간 패스 시간표와 하늘 경로 |
 
 실행 결과는 `results/`에 생성되며 Git으로 관리하지 않습니다. 예제를 다시 실행하면 같은 이름의 결과를 갱신합니다. 기본 관측 사례는 지점과 지상국이 가까워 접속 대기가 0일 수 있습니다. `run_demo`의 Perth 사례로 원격 지상국 조건을 확인할 수 있습니다.
 
 ## 코드 읽는 순서
+
+처음 TLE를 공부한다면 앱의 **실제 위성 · TLE → 단계별 실습** 또는 `edit study_tle`로 시작합니다. 구역별로 예상 질문 → 계산 → 확인을 진행하고, 최소 고각·시간 간격 실험은 직접 활성화합니다.
 
 1. `+mission/defaultConfig.m`, `validateConfig.m`: 입력 조건과 단위.
 2. `+mission/propagate.m`: 원궤도·평균 J2 전파, ECI→ECEF 변환.
@@ -54,6 +57,7 @@ app = launch_mission_designer;
 - [계산 가정과 결과 열](STUDY_NOTES.md)
 - [Lighting / Eclipse](LIGHTING_STUDY.md)
 - [Walker-Delta와 Toolbox 함수별 역할](WALKER_STUDY.md)
+- [실제 위성 TLE·학교 지상국 패스 예측](TLE_STUDY.md)
 - [AI 결과 해석 설정](AI_SETUP.md)
 - [검증 범위](VALIDATION.md)
 
@@ -72,7 +76,7 @@ assertSuccess(t);
 Aerospace Toolbox가 있으면 Walker 테스트도 실행합니다. 테스트 안에서 시나리오를 생성하므로 기존 MAT 파일은 필요하지 않습니다.
 
 ```matlab
-t = runtests('tests/test_walker.m');
+t = runtests({'tests/test_walker.m','tests/test_tle.m'});
 assertSuccess(t);
 ```
 

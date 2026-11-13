@@ -2,7 +2,18 @@ function evidence=aiEvidence(r,candidates)
 % Explicit allowlist: no raw MAT file, filesystem paths, credentials, or code.
 if nargin<2,candidates={};end
 evidence=struct('schemaVersion',1,'units','seconds, minutes, hours, km and degrees as named');
-if isfield(r,'kind')&&strcmp(r.kind,'walker-constellation-study')
+if isfield(r,'kind')&&strcmp(r.kind,'tle-ground-station-passes')
+    evidence.kind=r.kind;evidence.settings=struct();
+    keys={'siteName','latitudeDeg','longitudeDeg','altitudeM','minElevationDeg','stepSeconds','startKST'};
+    for k=1:numel(keys),evidence.settings.(keys{k})=r.settings.(keys{k});end
+    evidence.satellite=struct('name',r.tle.name,'catalogNumber',r.tle.catalogNumber, ...
+        'epochUTC',string(r.tle.epochUTC),'retrievedUTC',string(r.tle.retrievedUTC), ...
+        'propagator',r.propagator,'ageStartHours',r.tleAgeStartHours,'ageEndHours',r.tleAgeEndHours);
+    evidence.schedule=tableRows(r.schedule,100);evidence.totalPasses=height(r.schedule);
+    evidence.assumptions=[r.notes,{'KST columns use UTC+09:00. UTC columns use UTC.', ...
+        'StartClipped/EndClipped mean the pass extends beyond the prediction window.', ...
+        'Geometric radio visibility is not actual reception, transmitter activity, or naked-eye visibility.'}];
+elseif isfield(r,'kind')&&strcmp(r.kind,'walker-constellation-study')
     evidence.kind=r.kind;
     c=r.settings;
     keys={'epochUTC','durationHours','stepSeconds','radiusKm','inclinationDeg', ...

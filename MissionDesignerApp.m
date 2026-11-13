@@ -21,6 +21,7 @@ classdef MissionDesignerApp < handle
         AIButton
         AIInfo
         AITab
+        TLEPanel
         AIHistory=cell(0,2)
         AIContext=''
         AILastBody=[]
@@ -103,13 +104,15 @@ classdef MissionDesignerApp < handle
             app.CompareTable=uitable(grid); app.CompareTable.Layout.Row=2;
             app.CompareAxes=uiaxes(grid); app.CompareAxes.Layout.Row=3;
             b=uibutton(grid,'Text','비교 후보 초기화','ButtonPushedFcn',@(~,~)app.clearCandidates()); b.Layout.Row=4;
+            tleTab=uitab(tabs,'Title','실제 위성 · TLE');
+            app.TLEPanel=TLEPassPanel(tleTab);
             app.AITab=uitab(tabs,'Title','AI 결과 해석');
             grid=uigridlayout(app.AITab,[7 1]); grid.RowHeight={42,36,60,38,'2x',28,'1x'};
             uilabel(grid,'Text','현재 결과를 근거로 설명·비교·후속 실험을 질문하세요. 요청 시 아래 근거와 최근 대화 3쌍을 OpenAI로 보냅니다.', ...
                 'WordWrap','on');
             controls=uigridlayout(grid,[1 4]); controls.Layout.Row=2;
             controls.ColumnWidth={'1x','1x',110,110};controls.Padding=[0 0 0 0];
-            app.AISource=uidropdown(controls,'Items',{'현재 관측 결과','고정 태양 식 실습','Toolbox 조명 실습','Walker 위성군 실습'}, ...
+            app.AISource=uidropdown(controls,'Items',{'현재 관측 결과','고정 태양 식 실습','Toolbox 조명 실습','Walker 위성군 실습','실제 TLE 교신 예측'}, ...
                 'ValueChangedFcn',@(~,~)app.resetAI());
             model=getenv('OPENAI_MODEL');if isempty(model),model='gpt-4.1-mini';end
             app.AIModel=uieditfield(controls,'text','Value',model,'Tooltip','OpenAI Responses API 모델 ID');
@@ -241,6 +244,8 @@ classdef MissionDesignerApp < handle
         function evidence=getAIEvidence(app)
             root=fileparts(mfilename('fullpath'));
             switch app.AISource.Value
+                case '실제 TLE 교신 예측'
+                    evidence=mission.aiEvidence(app.TLEPanel.getCurrent());
                 case 'Walker 위성군 실습'
                     path=fullfile(root,'results','walker','result.mat');
                     assert(isfile(path),'먼저 run_walker_demo를 실행하세요.');

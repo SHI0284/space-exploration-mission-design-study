@@ -13,6 +13,8 @@
 %
 % Constellations
 %   run_walker_demo           - Walker-Delta phasing and visibility comparison.
+%   run_tle_demo              - Actual TLE, 24-hour campus passes and sky tracks.
+%   study_tle                 - Section-by-section TLE learning exercises.
 %
 % Optional result interpretation
 %   configure_openai_key      - Register an API key for the MATLAB session.
